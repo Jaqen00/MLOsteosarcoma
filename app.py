@@ -3,10 +3,9 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 from pysurvival.utils import load_model
-import plotly.graph_objects as go
 
 st.set_page_config(layout="wide")
-HEADER= ''
+
 @st.cache
 def load_setting():
     settings = {
@@ -37,8 +36,7 @@ settings, input_keys = load_setting()
 
 @st.cache
 def get_model():
-    model = load_model(
-        './deepsurv_2022_04_09.zip')
+    model = load_model('./deepsurv_2022_04_09.zip')
     return model
 
 
@@ -119,8 +117,8 @@ def plot_patients():
                 dict(
                     {
                         'Patients': [item['No']],
-                        '3-Year': ["{:.2f}%".format(item['3-year']* 100)],
-                        '5-Year': ["{:.2f}%".format(item['5-year']* 100)]
+                        '3-Year': ["{:.2f}%".format(item['3-year'] * 100)],
+                        '5-Year': ["{:.2f}%".format(item['5-year'] * 100)]
                     },
                     **item['arg']
                 )
@@ -131,10 +129,6 @@ def plot_patients():
 
 
 def predict(arg):
-    st.header('DeepSurv-based model for predicting survival of osteosarcoma', anchor='survival-of-osteosarcoma')
-    col1, col2 = st.columns([1, 9])
-    col3, col4, col5, col6 = st.columns([2, 3, 3, 2])
-    # print(arg)
     input = []
     for key in arg:
         if isinstance(arg[key], int):
@@ -142,18 +136,24 @@ def predict(arg):
         if isinstance(arg[key], str):
             input.append(settings[key]['values'].index(arg[key]))
     survival = deepsurv_model.predict_survival(np.array(input), t=None)
-    data =  {
-            'survival': survival.flatten(),
-            'times': [i for i in range(0, len(survival.flatten()))],
-            'No': len(st.session_state['patients']) + 1,
-            'arg': arg,
-            '3-year': survival[0, 36],
-            '5-year': survival[0, 60]
-        }
+    data = {
+        'survival': survival.flatten(),
+        'times': [i for i in range(0, len(survival.flatten()))],
+        'No': len(st.session_state['patients']) + 1,
+        'arg': arg,
+        '3-year': survival[0, 36],
+        '5-year': survival[0, 60]
+    }
     if not st.session_state['patients'] or arg != st.session_state['patients'][-1]['arg']:
         st.session_state['patients'].append(
             data
         )
+
+
+st.header('DeepSurv-based model for predicting survival of osteosarcoma', anchor='survival-of-osteosarcoma')
+if st.session_state['patients']:
+    col1, col2 = st.columns([1, 9])
+    col3, col4, col5, col6 = st.columns([2, 3, 3, 2])
     with col1:
         st.write('')
         st.write('')
@@ -166,7 +166,6 @@ def predict(arg):
         st.session_state['display'] = ['Single', 'Multiple'].index(
             st.radio("Display", ('Single', 'Multiple'), st.session_state['display']))
     with col2:
-        # st.subheader('Predicted survival curve')
         plot_survival()
     with col4:
         st.metric(
@@ -182,13 +181,15 @@ def predict(arg):
     st.write('')
     st.write('')
     plot_patients()
-    return 'prediction'
-
-if not st.session_state['patients']:
-    st.header('DeepSurv-based model for predicting survival of osteosarcoma', anchor='survival-of-osteosarcoma')
-    st.subheader("Instructions:")
-    st.write("1. Enter patient values on the left\n2. Press predict button\n3. The model will generate predictions")
-
+    st.write('')
+    st.write('')
+    st.write('')
+    st.write('')
+    st.write('')
+    
+st.subheader("Instructions:")
+st.write("1. Select patient's infomation on the left\n2. Press predict button\n3. The model will generate predictions")
+st.write('***Note: this model is still a research subject, and the accuracy of the results cannot be guaranteed!***')
 with st.sidebar:
     for code in sidebar_code:
         exec(code)
@@ -199,5 +200,6 @@ with st.sidebar:
             on_click=predict,
             args=[{key: eval(key.replace(' ', '____')) for key in input_keys}]
         )
+
 # predict({key: eval(key.replace(' ', '____')) for key in input_keys})
 # st.write(prediction)
