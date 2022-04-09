@@ -167,12 +167,12 @@ def plot_below_header():
         plot_survival()
     with col4:
         st.metric(
-            label='3-Year survival probility',
+            label='3-Year survival probability',
             value="{:.2f}%".format(st.session_state['patients'][-1]['3-year'] * 100)
         )
     with col5:
         st.metric(
-            label='5-Year survival probility',
+            label='5-Year survival probability',
             value="{:.2f}%".format(st.session_state['patients'][-1]['5-year'] * 100)
         )
     st.write('')
