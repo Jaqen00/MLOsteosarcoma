@@ -149,9 +149,7 @@ def predict(arg):
             data
         )
 
-
-st.header('DeepSurv-based model for predicting survival of osteosarcoma', anchor='survival-of-osteosarcoma')
-if st.session_state['patients']:
+def plot_below_header():
     col1, col2 = st.columns([1, 9])
     col3, col4, col5, col6 = st.columns([2, 3, 3, 2])
     with col1:
@@ -186,20 +184,26 @@ if st.session_state['patients']:
     st.write('')
     st.write('')
     st.write('')
-    
+
+st.header('DeepSurv-based model for predicting survival of osteosarcoma', anchor='survival-of-osteosarcoma')
+if st.session_state['patients']:
+    plot_below_header()
+
 st.subheader("Instructions:")
 st.write("1. Select patient's infomation on the left\n2. Press predict button\n3. The model will generate predictions")
 st.write('***Note: this model is still a research subject, and the accuracy of the results cannot be guaranteed!***')
+st.write("***[Paper link](https://pubmed.ncbi.nlm.nih.gov/)(To be updated)***")
 with st.sidebar:
-    for code in sidebar_code:
-        exec(code)
-    col7, col8, col9 = st.columns([3, 4, 3])
-    with col8:
-        prediction = st.button(
-            'Predict',
-            on_click=predict,
-            args=[{key: eval(key.replace(' ', '____')) for key in input_keys}]
-        )
+    with st.form("my_form"):
+        for code in sidebar_code:
+            exec(code)
+        col7, col8, col9 = st.columns([3, 4, 3])
+        with col8:
+            prediction = st.form_submit_button(
+                'Predict',
+                on_click=predict,
+                args=[{key: eval(key.replace(' ', '____')) for key in input_keys}]
+            )
 
 # predict({key: eval(key.replace(' ', '____')) for key in input_keys})
 # st.write(prediction)
