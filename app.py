@@ -6,8 +6,7 @@ from pysurvival.utils import load_model
 import plotly.graph_objects as go
 
 st.set_page_config(layout="wide")
-
-
+HEADER= ''
 @st.cache
 def load_setting():
     settings = {
@@ -97,7 +96,7 @@ def plot_survival():
                       range_y=[0, 1])
     fig.update_layout(template='simple_white',
                       title={
-                          'text': 'Predicted survival curve',
+                          'text': 'Estimated Survival Probability',
                           'y': 0.9,
                           'x': 0.5,
                           'xanchor': 'center',
@@ -132,10 +131,10 @@ def plot_patients():
 
 
 def predict(arg):
-    st.header('Machine learning-based model for predicting survival of osteosarcoma')
+    st.header('DeepSurv-based model for predicting survival of osteosarcoma', anchor='survival-of-osteosarcoma')
     col1, col2 = st.columns([1, 9])
     col3, col4, col5, col6 = st.columns([2, 3, 3, 2])
-    print(arg)
+    # print(arg)
     input = []
     for key in arg:
         if isinstance(arg[key], int):
@@ -166,8 +165,6 @@ def predict(arg):
         st.write('')
         st.session_state['display'] = ['Single', 'Multiple'].index(
             st.radio("Display", ('Single', 'Multiple'), st.session_state['display']))
-        # if not st.session_state['display']:
-        #     st.session_state['patients'] = [st.session_state['patients'][-1]]
     with col2:
         # st.subheader('Predicted survival curve')
         plot_survival()
@@ -187,14 +184,20 @@ def predict(arg):
     plot_patients()
     return 'prediction'
 
+if not st.session_state['patients']:
+    st.header('DeepSurv-based model for predicting survival of osteosarcoma', anchor='survival-of-osteosarcoma')
+    st.subheader("Instructions:")
+    st.write("1. Enter patient values on the left\n2. Press predict button\n3. The model will generate predictions")
 
 with st.sidebar:
     for code in sidebar_code:
         exec(code)
-predict({key: eval(key.replace(' ', '____')) for key in input_keys})
-# prediction = st.button(
-#     'Predict',
-#     on_click=predict,
-#     args=[{key: eval(key.replace(' ', '____')) for key in input_keys}]
-# )
+    col7, col8, col9 = st.columns([3, 4, 3])
+    with col8:
+        prediction = st.button(
+            'Predict',
+            on_click=predict,
+            args=[{key: eval(key.replace(' ', '____')) for key in input_keys}]
+        )
+# predict({key: eval(key.replace(' ', '____')) for key in input_keys})
 # st.write(prediction)
