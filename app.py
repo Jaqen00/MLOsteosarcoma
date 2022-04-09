@@ -120,8 +120,8 @@ def plot_patients():
                 dict(
                     {
                         'Patients': [item['No']],
-                        '3-Year': ["{:.2f}%".format(item['3-year'])],
-                        '5-Year': ["{:.2f}%".format(item['5-year'])]
+                        '3-Year': ["{:.2f}%".format(item['3-year']* 100)],
+                        '5-Year': ["{:.2f}%".format(item['5-year']* 100)]
                     },
                     **item['arg']
                 )
