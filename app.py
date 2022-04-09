@@ -6,7 +6,7 @@ from pysurvival.utils import load_model
 
 st.set_page_config(layout="wide")
 
-@st.cache
+@st.cache(show_spinner=False)
 def load_setting():
     settings = {
         'Age': {'values': [0, 100], 'type': 'slider', 'init_value': 50, 'add_after': ', year'},
@@ -34,7 +34,7 @@ def load_setting():
 settings, input_keys = load_setting()
 
 
-@st.cache
+@st.cache(show_spinner=False)
 def get_model():
     model = load_model('./deepsurv_2022_04_09.zip')
     return model
