@@ -127,8 +127,9 @@ def plot_patients():
     ).reset_index(drop=True)
     st.dataframe(patients)
 
-
+# @st.cache(show_spinner=True)
 def predict(arg):
+    print('update patients . ##########')
     input = []
     for key in arg:
         if isinstance(arg[key], int):
@@ -144,10 +145,15 @@ def predict(arg):
         '3-year': survival[0, 36],
         '5-year': survival[0, 60]
     }
-    if not st.session_state['patients'] or arg != st.session_state['patients'][-1]['arg']:
-        st.session_state['patients'].append(
-            data
-        )
+    st.session_state['patients'].append(
+        data
+    )
+    # if not st.session_state['patients'] or arg != st.session_state['patients'][-1]['arg']:
+    #     print('append patients ... ##########')
+    #     st.session_state['patients'].append(
+    #         data
+    #     )
+    print('update patients ... ##########')
 
 def plot_below_header():
     col1, col2 = st.columns([1, 9])
@@ -188,13 +194,13 @@ def plot_below_header():
 st.header('DeepSurv-based model for predicting survival of osteosarcoma', anchor='survival-of-osteosarcoma')
 if st.session_state['patients']:
     plot_below_header()
-
+print('header ##########')
 st.subheader("Instructions:")
 st.write("1. Select patient's infomation on the left\n2. Press predict button\n3. The model will generate predictions")
 st.write('***Note: this model is still a research subject, and the accuracy of the results cannot be guaranteed!***')
 st.write("***[Paper link](https://pubmed.ncbi.nlm.nih.gov/)(To be updated)***")
 with st.sidebar:
-    with st.form("my_form"):
+    with st.form("my_form",clear_on_submit = False):
         for code in sidebar_code:
             exec(code)
         col7, col8, col9 = st.columns([3, 4, 3])
@@ -204,6 +210,6 @@ with st.sidebar:
                 on_click=predict,
                 args=[{key: eval(key.replace(' ', '____')) for key in input_keys}]
             )
-
-# predict({key: eval(key.replace(' ', '____')) for key in input_keys})
+# if st.session_state['patients']:
+#     predict({key: eval(key.replace(' ', '____')) for key in input_keys})
 # st.write(prediction)
